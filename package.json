@@ -5,6 +5,9 @@
   "main": "serverless.ts",
   "scripts": {
     "deploy": "sls deploy",
+    "invoke:jq": "sls invoke -f jq --path src/functions/jq/mock.json -l",
+    "invoke:local:jq": "sls invoke local -f jq --path src/functions/jq/mock.json -l",
+    "invoke:local:jq:bad": "sls invoke local -f jq --path src/functions/jq/mock_bad.json -l",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
@@ -13,6 +16,7 @@
   "dependencies": {
     "@middy/core": "^1.5.2",
     "@middy/http-json-body-parser": "^1.5.2",
+    "pino": "^6.11.1",
     "source-map-support": "^0.5.19"
   },
   "devDependencies": {

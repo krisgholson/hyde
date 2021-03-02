@@ -1,7 +1,8 @@
 export default {
-  type: "object",
-  properties: {
-    name: { type: 'string' }
-  },
-  required: ['name']
+    type: "object",
+    properties: {
+        input: {type: ['object', 'array']},
+        program:{type: 'string'},
+    },
+    required: ['input','program']
 } as const;

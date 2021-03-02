@@ -1,22 +1,25 @@
 import 'source-map-support/register';
-import util from 'util';
-import child_process from 'child_process';
-const exec = util.promisify(child_process.exec);
-
-import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway';
-import { formatJSONResponse } from '@libs/apiGateway';
-import { middyfy } from '@libs/lambda';
-
+import {pino} from 'pino';
+import type {ValidatedEventAPIGatewayProxyEvent} from '@libs/apiGateway';
+import {formatJSONResponse} from '@libs/apiGateway';
+import {middyfy} from '@libs/lambda';
 import schema from './schema';
+import {JqService} from './service';
+
+const logger = pino();
+const jqService = new JqService();
 
 const jq: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 
-  const execResponse = await exec('jq --version');
+    logger.trace(event);
 
-  return formatJSONResponse({
-    execResponse: execResponse,
-    event,
-  });
+    try {
+        const output = await jqService.run(event.body.input, event.body.program);
+        return formatJSONResponse(output);
+    } catch (e) {
+        logger.error(e);
+        return formatJSONResponse({message: e.message}, 400);
+    }
 }
 
 export const main = middyfy(jq);
